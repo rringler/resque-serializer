@@ -1,11 +1,18 @@
+require 'resque-serializer'
+
+require 'active_support'
+require 'active_support/core_ext/numeric/time'
 require 'bundler/setup'
-require 'resque/serializer'
+require 'mock_redis'
+require 'resque'
+require 'pry-byebug'
 
 RSpec.configure do |config|
-  # Enable flags like --only-failures and --next-failure
-  config.example_status_persistence_file_path = '.rspec_status'
-
-  config.expect_with :rspec do |c|
+  config.expect_with(:rspec) do |c|
     c.syntax = :expect
+  end
+
+  config.before(:suite) do
+    Resque.redis = MockRedis.new
   end
 end
