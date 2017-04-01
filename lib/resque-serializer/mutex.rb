@@ -7,37 +7,29 @@ module Resque
       class Mutex
         class LockFailed < StandardError; end
 
-        def self.synchronize(key, options = {}, &block)
-          new(key, options).synchronize(&block)
-        end
+        attr_reader :key, :ttl
+
+        delegate :redis,
+          to: Resque
 
         def initialize(key, options = {})
           @key = key
           @ttl = options.fetch(:ttl, 5.minutes).to_i
         end
 
-        def synchronize(&block)
-          lock
-
-          yield
-        ensure
-          unlock
+        def lock
+          !!redis.set(key, true, set_options)
         end
 
-        def lock
-          redis.set(key, set_options) || fail(LockFailed)
+        def lock!
+          !!redis.set(key, true, set_options) || fail(LockFailed)
         end
 
         def unlock
-          redis.del(key)
+          !!redis.del(key)
         end
 
         private
-
-        attr_reader :key, :ttl
-
-        delegate :redis,
-          to: Resque
 
         def set_options
           {
