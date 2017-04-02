@@ -1,49 +1,31 @@
-require 'resque-serializer/mutex'
 require 'resque-serializer/version'
+require 'resque-serializer/mutex'
+require 'resque-serializer/serializers/both'
+require 'resque-serializer/serializers/combined'
+require 'resque-serializer/serializers/job'
+require 'resque-serializer/serializers/queue'
 
 module Resque
   module Plugins
     module Serializer
-      def before_enqueue_set_queue_lock(*args)
-        queue_mutex(args).lock
-      end
-
-      def before_dequeue_set_job_lock(*args)
-        job_mutex(args).lock
-      end
-
-      def around_perform_with_lock(*args)
-        yield
-      ensure
-        job_mutex(args).unlock
-        queue_mutex(args).unlock
+      def serialize(resource)
+        case resource
+        when :job      then extend(Serializers::Job)
+        when :queue    then extend(Serializers::Queue)
+        when :both     then extend(Serializers::Both)
+        when :combined then extend(Serializers::Combined)
+        else                raise_invalid_resource
+        end
       end
 
       private
 
-      delegate :redis,
-        to: Resque
+      def raise_invalid_resource
+        error_msg = begin
+          'The passed argument must be one of: [:job, :queue, :both, :combined]'
+        end
 
-      def job_key(args)
-        klass = self.name.tableize.singularize
-        args  = args.map(&:to_s).join(',')
-
-        "resque-serializer:job:#{klass}:#{args}"
-      end
-
-      def job_mutex(args)
-        Mutex.new(job_key(args))
-      end
-
-      def queue_key(args)
-        klass = self.name.tableize.singularize
-        args  = args.map(&:to_s).join(',')
-
-        "resque-serializer:queue:#{klass}:#{args}"
-      end
-
-      def queue_mutex(args)
-        Mutex.new(queue_key(args))
+        raise ArgumentError, error_msg
       end
     end
   end

@@ -25,5 +25,6 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency 'pry-byebug'
   gem.add_development_dependency 'pry-stack_explorer'
   gem.add_development_dependency 'rake'
+  gem.add_development_dependency 'resque_spec'
   gem.add_development_dependency 'rspec', '~> 3.0'
 end

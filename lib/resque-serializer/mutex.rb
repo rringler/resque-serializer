@@ -1,4 +1,3 @@
-require 'active_support'
 require 'active_support/core_ext/numeric/time'
 
 module Resque
@@ -12,9 +11,9 @@ module Resque
         delegate :redis,
           to: Resque
 
-        def initialize(key, options = {})
+        def initialize(key, ttl: 5.minutes)
           @key = key
-          @ttl = options.fetch(:ttl, 5.minutes).to_i
+          @ttl = ttl.to_i
         end
 
         def lock
@@ -23,6 +22,10 @@ module Resque
 
         def lock!
           !!redis.set(key, true, set_options) || fail(LockFailed)
+        end
+
+        def locked?
+          !!redis.get(key)
         end
 
         def unlock
