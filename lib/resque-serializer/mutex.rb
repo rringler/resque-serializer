@@ -9,7 +9,7 @@ module Resque
         attr_reader :key, :ttl
 
         delegate :redis,
-          to: Resque
+          to: :Resque
 
         def initialize(key, ttl: 5.minutes)
           @key = key
