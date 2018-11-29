@@ -1,4 +1,5 @@
 require 'resque-serializer/version'
+require 'resque-serializer/monkey_patches/resque'
 require 'resque-serializer/mutex'
 require 'resque-serializer/serializers/both'
 require 'resque-serializer/serializers/combined'

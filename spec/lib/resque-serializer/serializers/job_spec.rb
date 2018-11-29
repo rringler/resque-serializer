@@ -21,55 +21,60 @@ class JobSerializedByJob
 end
 
 RSpec.describe JobSerializedByJob do
-  let(:args) { %w(arg1 arg2) }
+  let(:args)       { %w[arg1 arg2] }
+  let(:queue_name) { :default }
 
   before do
-    ResqueSpec.reset!
     Resque.redis.redis.flushall
   end
 
-  describe 'before dequeuing the job' do
-    let(:mutex) { described_class.mutex(args) }
+  context 'with no jobs in the queue' do
+    before do
+      expect(queue_size).to eq(0)
+    end
 
-    subject(:dequeue_job) { Resque.dequeue(described_class, *args) }
+    it 'can enqueue the job' do
+      expect { enqueue_job }.to change {
+        queue_size
+      }.from(0).to(1)
+    end
 
-    it 'locks the mutex' do
-      expect { dequeue_job }.to change {
-        mutex.locked?
-      }.from(false).to(true)
+    it 'can not execute any jobs' do
+      expect(execute_job).to be_nil
     end
   end
 
-  describe 'after performing the job' do
-    let(:mutex) { described_class.mutex(args) }
-
+  context 'with one job in the queue' do
     before do
-      Resque.enqueue(described_class, *args)
-      mutex.lock!
+      enqueue_job
+      expect(queue_size).to eq(1)
     end
 
-    subject(:perform_job) { ResqueSpec.perform_next(:default) }
-
-    context 'when the job completes successfully' do
-      it 'releases the lock after execution' do
-        expect { perform_job }.to change {
-          mutex.locked?
-        }.from(true).to(false)
-      end
+    it 'can enqueue the same job' do
+      expect { enqueue_job }.to change {
+        queue_size
+      }.from(1).to(2)
     end
 
-    context 'when the job raises an exception' do
-      let(:error) { StandardError }
+    it 'can execute the job' do
+      expect(execute_job).to_not be_nil
+    end
+  end
 
-      before { allow(described_class).to receive(:perform).and_raise(error) }
+  context 'with one job in the queue and one job being executed' do
+    before do
+      enqueue_job
+      expect(queue_size).to eq(1)
+      execute_job
+      expect(queue_size).to eq(0)
+      enqueue_job
+      expect(queue_size).to eq(1)
+    end
 
-      it 'still releases the lock after execution' do
-        expect(mutex.locked?).to eq(true)
-
-        expect { perform_job }.to raise_error(error)
-
-        expect(mutex.locked?).to eq(false)
-      end
+    it 'can enqueue the same job' do
+      expect { enqueue_job }.to change {
+        queue_size
+      }.from(1).to(2)
     end
   end
 end
