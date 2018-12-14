@@ -21,6 +21,7 @@ Gem::Specification.new do |gem|
   gem.add_dependency 'resque'
 
   gem.add_development_dependency 'bundler', '~> 1.14'
+  gem.add_development_dependency 'bump', '~> 0.7'
   gem.add_development_dependency 'mock_redis'
   gem.add_development_dependency 'pry-byebug'
   gem.add_development_dependency 'pry-stack_explorer'
