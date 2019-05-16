@@ -32,15 +32,21 @@ module Resque
             job_mutex(args).unlock
           end
 
+          private
+
+          delegate :configuration,
+            to: Resque::Plugins::Serializer
+
+          delegate :mutex_generator,
+            to: :configuration
+
           def queue_mutex(args)
-            Serializer::Mutex.new(queue_key(args))
+            mutex_generator.call(queue_key(args))
           end
 
           def job_mutex(args)
-            Serializer::Mutex.new(job_key(args))
+            mutex_generator.call(job_key(args))
           end
-
-          private
 
           def queue_key(args)
             klass = self.name.tableize.singularize

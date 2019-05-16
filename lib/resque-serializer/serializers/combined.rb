@@ -24,11 +24,17 @@ module Resque
             mutex(args).unlock
           end
 
-          def mutex(args)
-            Serializer::Mutex.new(key(args))
-          end
-
           private
+
+          delegate :configuration,
+            to: Resque::Plugins::Serializer
+
+          delegate :mutex_generator,
+            to: :configuration
+
+          def mutex(args)
+            mutex_generator.call(key(args))
+          end
 
           def key(args)
             klass = self.name.tableize.singularize
