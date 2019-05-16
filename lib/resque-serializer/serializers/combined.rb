@@ -1,9 +1,10 @@
+# frozen_string_literal: true
+
 module Resque
   module Plugins
     module Serializer
       module Serializers
         module Combined
-
           # before_enqueue: ✓
           #        enqueue: |
           #  after_enqueue: |
@@ -37,7 +38,7 @@ module Resque
           end
 
           def key(args)
-            klass = self.name.tableize.singularize
+            klass = name.tableize.singularize
             args  = args.map(&:to_s).join(',')
 
             "resque-serializer:#{klass}:#{args}"

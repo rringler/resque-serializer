@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'active_support/core_ext/numeric/time'
 
 module Resque
@@ -21,7 +23,7 @@ module Resque
         end
 
         def lock!
-          !!redis.set(key, true, set_options) || fail(LockFailed)
+          !!redis.set(key, true, set_options) || raise(LockFailed)
         end
 
         def locked?

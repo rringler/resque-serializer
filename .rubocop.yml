@@ -1,0 +1,46 @@
+# The behavior of RuboCop can be controlled via the .rubocop.yml
+# configuration file. It makes it possible to enable/disable
+# certain cops (checks) and to alter their behavior if they accept
+# any parameters. The file can be placed either in your home
+# directory or in some project directory.
+#
+# RuboCop will start looking for the configuration file in the directory
+# where the inspected file is and continue its way up to the root directory.
+#
+# See https://github.com/rubocop-hq/rubocop/blob/master/manual/configuration.md
+
+Layout/AlignArguments:
+  EnforcedStyle: with_fixed_indentation
+
+Layout/DotPosition:
+  EnforcedStyle: trailing
+
+Layout/MultilineMethodCallIndentation:
+  EnforcedStyle: indented
+
+Metrics/BlockLength:
+  Exclude:
+    - spec/**/*.rb
+    - resque-serializer.gemspec
+
+Metrics/LineLength:
+  Max: 80
+  Exclude:
+    - resque-serializer.gemspec
+
+Naming/FileName:
+  Exclude:
+    - lib/resque-serializer.rb
+
+Style/AccessModifierDeclarations:
+  Exclude:
+    - lib/resque-serializer/monkey_patches/resque.rb
+
+Style/AsciiComments:
+  Enabled: false
+
+Style/Documentation:
+  Enabled: false
+
+Style/DoubleNegation:
+  Enabled: false

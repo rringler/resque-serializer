@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 class JobSerializedByBoth
@@ -17,7 +19,7 @@ class JobSerializedByBoth
   #        perform:   |
   #  after_perform:   ✗
 
-  def self.perform(*args); end
+  def self.perform(*_args); end
 end
 
 RSpec.describe JobSerializedByBoth do
