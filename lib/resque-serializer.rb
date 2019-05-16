@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'resque'
 require 'resque-serializer/configuration'
 require 'resque-serializer/version'
@@ -14,7 +16,7 @@ module Resque
       class << self
         attr_accessor :configuration
 
-        def configure(&block)
+        def configure(&_block)
           self.configuration ||= Configuration.instance
 
           yield(configuration)

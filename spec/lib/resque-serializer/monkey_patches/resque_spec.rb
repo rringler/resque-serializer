@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 class ResqueDequeueHookJob
@@ -18,12 +20,12 @@ RSpec.describe ResqueSerializer::MonkeyPatches::Resque do
     let(:worker)        { Resque::Worker.new(queue_name) }
 
     before do
-      allow(Resque::Plugin)
-        .to receive(:before_dequeue_hooks)
-        .and_return(dequeue_hooks)
-      allow(Resque::Plugin)
-        .to receive(:after_dequeue_hooks)
-        .and_return(dequeue_hooks)
+      allow(Resque::Plugin).
+        to receive(:before_dequeue_hooks).
+        and_return(dequeue_hooks)
+      allow(Resque::Plugin).
+        to receive(:after_dequeue_hooks).
+        and_return(dequeue_hooks)
 
       Resque.enqueue(ResqueDequeueHookJob)
     end

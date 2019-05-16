@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ResqueTestHelper
   def enqueue_job
     Resque.enqueue(described_class, *args)
