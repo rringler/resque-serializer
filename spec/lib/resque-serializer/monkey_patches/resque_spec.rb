@@ -10,25 +10,31 @@ class ResqueDequeueHookJob
   def self.perform(*args); end
 end
 
-RSpec.describe ResqueDequeueHookJob do
-  let(:args)          { %w[arg1 arg2] }
-  let(:queue_name)    { :default }
-  let(:dequeue_hooks) { [] }
+RSpec.describe ResqueSerializer::MonkeyPatches::Resque do
+  describe 'when prepended' do
+    let(:args)          { %w[arg1 arg2] }
+    let(:queue_name)    { :default }
+    let(:dequeue_hooks) { [] }
+    let(:worker)        { Resque::Worker.new(queue_name) }
 
-  before do
-    allow(Resque::Plugin)
-      .to receive(:before_dequeue_hooks)
-      .and_return(dequeue_hooks)
-    allow(Resque::Plugin)
-      .to receive(:after_dequeue_hooks)
-      .and_return(dequeue_hooks)
-    enqueue_job
-  end
+    before do
+      allow(Resque::Plugin)
+        .to receive(:before_dequeue_hooks)
+        .and_return(dequeue_hooks)
+      allow(Resque::Plugin)
+        .to receive(:after_dequeue_hooks)
+        .and_return(dequeue_hooks)
 
-  it 'executes the dequeue hooks' do
-    expect(::Resque::Plugin).to receive(:before_dequeue_hooks).ordered
-    expect(::Resque::Plugin).to receive(:after_dequeue_hooks).ordered
+      Resque.enqueue(ResqueDequeueHookJob)
+    end
 
-    execute_job
+    subject(:execute_job) { worker.reserve }
+
+    it 'executes the dequeue hooks' do
+      expect(::Resque::Plugin).to receive(:before_dequeue_hooks).ordered
+      expect(::Resque::Plugin).to receive(:after_dequeue_hooks).ordered
+
+      execute_job
+    end
   end
 end
