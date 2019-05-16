@@ -9,7 +9,7 @@ class ResqueDequeueHookJob
 
   @queue = :default
 
-  def self.perform(*args); end
+  def self.perform(*_args); end
 end
 
 RSpec.describe ResqueSerializer::MonkeyPatches::Resque do

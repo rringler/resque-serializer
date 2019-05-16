@@ -14,10 +14,10 @@ module Resque
   module Plugins
     module Serializer
       class << self
-        attr_accessor :configuration
+        attr_reader :configuration
 
         def configure(&_block)
-          self.configuration ||= Configuration.instance
+          @configuration ||= Configuration.instance
 
           yield(configuration)
         end

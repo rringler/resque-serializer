@@ -1,0 +1,24 @@
+---
+# Exclude vendor/bundle directory for Travis
+exclude_paths:
+  - vendor/bundle
+
+detectors:
+  Attribute:
+    exclude:
+      - Resque::Plugins::Serializer::Configuration#mutex_generator
+
+  ControlParameter:
+    exclude:
+      - Resque::Plugins::Serializer
+
+  DuplicateMethodCall:
+    exclude:
+      - ResqueSerializer::MonkeyPatches::Resque
+
+  IrresponsibleModule:
+    enabled: false
+
+  TooManyStatements:
+    exclude:
+      - ResqueSerializer::MonkeyPatches::Resque

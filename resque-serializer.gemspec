@@ -30,6 +30,7 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency 'pry-byebug'
   gem.add_development_dependency 'pry-stack_explorer'
   gem.add_development_dependency 'rake'
+  gem.add_development_dependency 'reek'
   gem.add_development_dependency 'rspec', '~> 3.0'
   gem.add_development_dependency 'rubocop'
   gem.add_development_dependency 'rubocop-performance'

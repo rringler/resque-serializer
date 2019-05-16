@@ -19,7 +19,7 @@ class JobSerializedByJob
   #        perform: |
   #  after_perform: ✗
 
-  def self.perform(*args); end
+  def self.perform(*_args); end
 end
 
 RSpec.describe JobSerializedByJob do
