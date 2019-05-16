@@ -1,3 +1,5 @@
+require 'resque'
+require 'resque-serializer/configuration'
 require 'resque-serializer/version'
 require 'resque-serializer/monkey_patches/resque'
 require 'resque-serializer/mutex'
@@ -9,6 +11,16 @@ require 'resque-serializer/serializers/queue'
 module Resque
   module Plugins
     module Serializer
+      class << self
+        attr_accessor :configuration
+
+        def configure(&block)
+          self.configuration ||= Configuration.instance
+
+          yield(configuration)
+        end
+      end
+
       def serialize(resource)
         case resource
         when :job      then extend(Serializers::Job)
@@ -31,3 +43,6 @@ module Resque
     end
   end
 end
+
+# Use default configuration
+Resque::Plugins::Serializer.configure {}
