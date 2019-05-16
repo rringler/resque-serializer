@@ -1,5 +1,7 @@
 # Resque::Serializer
 
+[![Build Status](https://travis-ci.org/rringler/resque-serializer.svg?branch=master)](https://travis-ci.org/rringler/resque-serializer)
+
 A Resque plugin which ensures for a given queue, that only one worker is executing a job at any given time.
 
 It is slightly more flexible than [Resque::LonelyJob](https://github.com/wallace/resque-lonely_job).
